@@ -1,3 +1,7 @@
+#include <Servo.h>
+
+Servo srv;
+
 void setup() {
   Serial.begin(9600);
   srv.attach(8);
@@ -8,9 +12,24 @@ void setup() {
 
 }
 
+ int on_off = 0;
 void loop() {
-  button_case();
-  UDLR();
+  
+  if(digitalRead(13) == 1)
+    on_off = 1;
+  delay(200);
+  if(on_off == 1){
+   while(1){
+    if(digitalRead(13) == 1){
+      delay(100);
+      on_off = 0;
+      break;}
+    else{
+      button_case();
+      UDLR();}
+   }
+  }
+  
 }
 
 void button_case(){
@@ -24,6 +43,11 @@ void button_case(){
 void UDLR(){
   int up_down = analogRead(A0);
   int left_right = analogRead(A1);
+  
+  int UD = map(up_down, 0,1023, 0,255);
+  int LR = map(left_right,0,1023, 0,255 );
+
+  srv.write(LR);
   
   if(up_down > 700 && left_right > 700)
     Serial.println("UP/Right");
